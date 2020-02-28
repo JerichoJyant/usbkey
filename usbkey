@@ -63,5 +63,5 @@ else
 	echo "usage: go -- shortcut to run both 'unlock' and 'ssh'"
 	echo ""
 	echo "usage: lock -- encrypt and unmount usbkey"
-	echo "usage: shutdown -- encrypt, unmount, remove SSH key, and disable usbkey until removed and replaced"
+	echo "usage: shutdown -- encrypt, unmount, and disable usbkey until removed and replaced"
 fi
