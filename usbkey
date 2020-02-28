@@ -1,0 +1,77 @@
+#!/bin/bash
+
+function loadSSHKey {
+    /usr/bin/keychain -q /media/josh/keysandbackups/id_rsa
+    source $HOME/.keychain/$HOSTNAME-sh
+}
+
+function removeSSHKey {
+    /usr/bin/keychain -k mine
+}
+
+function unlockUSBDrive {
+    udisksctl unlock -b /dev/disk/by-partlabel/keysandbackups
+	udisksctl mount -b /dev/disk/by-label/keysandbackups
+	if [ $? -eq 0 ]; then
+        echo ""
+        echo "Usbkey unlocked"
+    else
+        echo ""
+        echo "Usbkey failed to unlock"
+        echo "Did you use the correct passphrase?"
+        echo ""
+        echo "Check to see if it's plugged in"
+        echo "If it's plugged in, unplug it and plug it in again"
+    fi
+}
+
+function lockUSBDrive {
+    udisksctl unmount -b /dev/disk/by-label/keysandbackups 
+	udisksctl lock -b /dev/disk/by-partlabel/keysandbackups
+	if [ $? -eq 0 ]; then
+        echo ""
+        echo "Usbkey locked"
+    else
+        echo ""
+        echo "Usbkey failed to lock"
+        echo ""
+        echo "Check to see if it's plugged in"
+        echo "If it's plugged in, unplug it and plug it in again"
+    fi
+}
+
+function shutdownUSBDrive {
+    udisksctl unmount -b /dev/disk/by-label/keysandbackups 
+    udisksctl lock -b /dev/disk/by-partlabel/keysandbackups
+    udisksctl power-off -b /dev/disk/by-partlabel/keysandbackups
+    if [ $? -eq 0 ]; then
+        echo ""
+        echo "Usbkey shutdown"
+    else
+        echo ""
+        echo "Usbkey failed to shutdown"
+    fi
+}
+
+if [ "$1" = "unlock" ]; then
+	unlockUSBDrive
+elif [ "$1" = "ssh" ]; then
+    loadSSHKey
+elif [ "$1" = "ssh-off" ]; then
+    removeSSHKey
+elif [ "$1" = "go" ]; then
+    unlockUSBDrive
+    loadSSHKey
+elif [ "$1" = "lock" ]; then
+    removeSSHKey
+	lockUSBDrive
+elif [ "$1" = "shutdown" ]; then
+    shutdownUSBDrive
+else
+	echo "usage: unlock -- decrypt and mount usbkey"
+	echo "usage: ssh -- load SSH key from usbkey"
+	echo "usage: go -- shortcut to run both 'unlock' and 'ssh'"
+	echo ""
+	echo "usage: lock -- encrypt and unmount usbkey"
+	echo "usage: shutdown -- encrypt, unmount, remove SSH key, and disable usbkey until removed and replaced"
+fi
