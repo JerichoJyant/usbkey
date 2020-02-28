@@ -13,22 +13,23 @@ fi
 function unlockUSBDrive {
     unlockOutput=$(udisksctl unlock -b /dev/disk/by-partlabel/${encryptedDriveName} 2>&1 >/dev/null)
     if  [[ $unlockOutput == *"already unlocked"* ]]; then
-        echo "USBKey already unlocked"
+        echo ""
+        echo "USBKey '$encryptedDriveName' already unlocked"
     elif [[ $unlockOutput == *"not permitted"* ]]; then
-        echo "Passphrase incorrect"
+        echo ""
+        echo "Passphrase for USBKey '$encryptedDriveName' incorrect" >/dev/stderr
     elif [[ $unlockOutput == *"Error looking up"* ]]; then
-        echo "USBKey '$encryptedDriveName' not found"
-        echo "Check to see that it's plugged in"
-        echo "If it's plugged in, remove and reinsert it and try again"
+        echo "USBKey '$encryptedDriveName' not found" >/dev/stderr
+        echo ""
+        echo "It may be already locked, not plugged in, or shutdown"
+        echo "If it's plugged in, remove and reinsert it then try again"
     else 
-        echo "USBKey unlocked"
         mountOutput=$(udisksctl mount -b /dev/disk/by-label/${encryptedDriveName} 2>&1 >/dev/null)
         if [ $? -eq 0 ]; then
-            echo "USBKey mounted"
+            echo "USBKey '$encryptedDriveName' unlocked and mounted"
         else
-            echo ""
-            echo "USBKey failed to mount:"
-            echo $mountOutput
+            echo "USBKey '$encryptedDriveName' failed to mount" >/dev/stderr
+            echo $mountOutput >/dev/stderr
         fi
     fi
 }
@@ -38,30 +39,34 @@ function loadSSHKey {
 }
 
 function lockUSBDrive {
-    udisksctl unmount -b /dev/disk/by-label/${encryptedDriveName} 
-    udisksctl lock -b /dev/disk/by-partlabel/${encryptedDriveName}
-    if [ $? -eq 0 ]; then
+    unmountOutput=$(udisksctl unmount -b /dev/disk/by-label/${encryptedDriveName} 2>&1 >/dev/null)
+    if  [[ $unmountOutput == *"Error looking up object"* ]]; then
+        echo "Error: Count not unmount USBKey '$encryptedDriveName'" >/dev/stderr
         echo ""
-        echo "Usbkey locked"
+        echo "It may be already locked, not plugged in, or shutdown"
+        echo "If it's plugged in, remove and reinsert it then try again"
     else
-        echo ""
-        echo "Usbkey failed to lock"
-        echo ""
-        echo "Check to see if it's plugged in"
-        echo "If it's plugged in, unplug it and plug it in again"
+        lockOutput=$(udisksctl lock -b /dev/disk/by-partlabel/${encryptedDriveName} 2>&1 >/dev/null)
+        if [ $? -eq 0 ]; then
+            echo "USBKey '$encryptedDriveName' unmounted and locked"
+        else
+            echo "Error: Count not lock USBKey '$encryptedDriveName'" >/dev/stderr
+            echo ""
+            echo "It may be already locked, not plugged in, or shutdown"
+        fi
     fi
 }
 
 function shutdownUSBDrive {
-    udisksctl unmount -b /dev/disk/by-label/${encryptedDriveName} 
-    udisksctl lock -b /dev/disk/by-partlabel/${encryptedDriveName}
-    udisksctl power-off -b /dev/disk/by-partlabel/${encryptedDriveName}
+    lockOutput=$(lockUSBDrive 2>&1 >/dev/null)
+    # We assume it's either already locked or 
+    shutdownOutput=$(udisksctl power-off -b /dev/disk/by-partlabel/${encryptedDriveName} 2>&1 >/dev/null)
     if [ $? -eq 0 ]; then
-        echo ""
-        echo "Usbkey shutdown"
+        echo "'$encryptedDriveName' shutdown"
     else
+        echo $lockOutput >/dev/stderr
         echo ""
-        echo "Usbkey failed to shutdown"
+        echo "Error: '$encryptedDriveName' failed to shutdown" >/dev/stderr
     fi
 }
 
@@ -71,7 +76,7 @@ function printSetupHelp {
     echo "Any removable storage device may become a USBKey"
     echo "Please follow the instructions in README.md"
     echo ""
-    echo "The most up to date README.md can be found on the usbkey-script GitHub at:"
+    echo "The most up to date README.md can be found on the usbkey GitHub at:"
     echo "  https://github.com/JerichoJyant/usbkey-script"
 }
 
