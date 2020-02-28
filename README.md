@@ -9,21 +9,21 @@ I made USBKey because I was tired of entering my SSH key passphrase on every git
 Unix/Linux only! (May work on macOS, try at your own risk)
 
 ## Usage:
-The term 'usbkey' refers to the bash script in this repository. 'USBKey' refers to your encrypted USB flash drive.
+The term "`usbkey`" refers to the bash script in this repository. "USBKey" refers to your encrypted USB flash drive.
 
 When you plug in your USBKey, run `usbkey unlock` and enter your drive's password (You will choose it when you set up your drive). If you need to use your ssh key in a terminal session (I use it for git), run `usbkey ssh` and input your SSH key passphrase. Your passphrase will be saved in ssh-agent for the entirety of that terminal session. `usbkey go` runs both `usbkey unlock` and `usbkey ssh`, in that order.
 
-When you are done with your USBKey, run `usbkey lock`. This will lock and unmount your USBKey. You may also run `usbkey shutdown`, which will lock, unmount, and deactivate your usbkey. You wil need to remove it and reinsert it to use it again. **Warning:** Do not remove your USBKey until you have run `usbkey lock` or `usbkey shutdown`. Data loss and unexpected behaviour may occur.
+When you are done with your USBKey, run `usbkey lock`. This will lock and unmount your USBKey. You may also run `usbkey shutdown`, which will lock, unmount, and deactivate your USBKey. You wil need to remove it and reinsert it to use it again. **Warning:** Do not remove your USBKey until you have run `usbkey lock` or `usbkey shutdown`. Data loss and unexpected behaviour may occur.
 
 From the script's help output:
 
 ```
-usage: unlock -- decrypt and mount your usbkey
-usage: ssh -- load SSH key from your usbkey
+usage: unlock -- decrypt and mount your USBKey
+usage: ssh -- load SSH key from your USBKey
 usage: go -- shortcut to run both 'unlock' and 'ssh'
 
-usage: lock -- encrypt and unmount your usbkey
-usage: shutdown -- encrypt, unmount, and disable your usbkey until removed and replaced
+usage: lock -- encrypt and unmount your USBKey
+usage: shutdown -- encrypt, unmount, and disable your USBKey until removed and replaced
 ```
 
 ## Setting up your drive:
@@ -44,12 +44,12 @@ The script was designed and tested on Ubuntu 18.04. You need udisksctl, ssh-add,
 
 Run `cp ~/.bashrc ~/.bashrc-backup` to make a backup of your bash profile.
 
-Add `eval $(ssh-agent)` and `export PATH=$PATH:~/scripts` to your `~/.bashrc`. Replace `~/scripts` with the location you placed the usbkey script. `cd` to it and make it executable with `chmod +x usbkey`.
+Add `eval $(ssh-agent)` and `export PATH=$PATH:~/scripts` to your `~/.bashrc`. Replace `~/scripts` with the location you placed the `usbkey` script. `cd` to it and make it executable with `chmod +x usbkey`.
 
-Edit the usbkey script, changing the `encryptedDriveName="keysandbackups"` variable to the name you chose in the device setup.
+Edit the `usbkey` script, changing the `encryptedDriveName="keysandbackups"` variable to the name you chose in the device setup.
 
 ## GitHub / SSH key setup
-To place an SSH key on your usbkey, with your usbkey unlocked (`usbkey unlock`), follow [GitHub's SSH creation key instructions](https://help.github.com/en/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent). Use the path `/media/[Your username]/keysandbackups/id_rsa` instead of pressing enter for the default location. Change `keysandbackups` to the name of your drive, if you used a different name.
+To place an SSH key on your USBKey, with your USBKey unlocked (`usbkey unlock`), follow [GitHub's SSH creation key instructions](https://help.github.com/en/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent). Use the path `/media/[Your username]/keysandbackups/id_rsa` instead of pressing enter for the default location. Change `keysandbackups` to the name of your drive, if you used a different name.
 
 If you are using your SSH key for GitHub, edit `/home/[Your Username]/.ssh/config` and add the following to it:
 
@@ -65,7 +65,7 @@ Refer to your git host's documentation if you are not using GitHub. Once again, 
 ## Disclamier
 This script is not completely finished and may not work well for you. See the LICENSE file for the full disclamier.
 
-Once again, be careful as you may lose data. Also, if you place senstive or valuable data on the drive, you will lose access to it if you forget your passphrase. Make a backup of everything you can not afford to lose and place it in a secure location other than your usbkey.
+Once again, be careful as you may lose data. Also, if you place senstive or valuable data on the drive, you will lose access to it if you forget your passphrase. Make a backup of everything you can not afford to lose and place it in a secure location other than your USBKey.
 
 I recommend reading the script before you use it so you have an idea of what the script does under the hood.
 
