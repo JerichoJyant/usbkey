@@ -1,8 +1,10 @@
 #!/bin/bash
 
+encryptedDriveName="keysandbackups"
+
 function unlockUSBDrive {
-    udisksctl unlock -b /dev/disk/by-partlabel/keysandbackups
-	udisksctl mount -b /dev/disk/by-label/keysandbackups
+    udisksctl unlock -b /dev/disk/by-partlabel/${encryptedDriveName}
+	udisksctl mount -b /dev/disk/by-label/${encryptedDriveName}
 	if [ $? -eq 0 ]; then
         echo ""
         echo "Usbkey unlocked"
@@ -17,8 +19,8 @@ function unlockUSBDrive {
 }
 
 function lockUSBDrive {
-    udisksctl unmount -b /dev/disk/by-label/keysandbackups 
-	udisksctl lock -b /dev/disk/by-partlabel/keysandbackups
+    udisksctl unmount -b /dev/disk/by-label/${encryptedDriveName} 
+	udisksctl lock -b /dev/disk/by-partlabel/${encryptedDriveName}
 	if [ $? -eq 0 ]; then
         echo ""
         echo "Usbkey locked"
@@ -32,9 +34,9 @@ function lockUSBDrive {
 }
 
 function shutdownUSBDrive {
-    udisksctl unmount -b /dev/disk/by-label/keysandbackups 
-    udisksctl lock -b /dev/disk/by-partlabel/keysandbackups
-    udisksctl power-off -b /dev/disk/by-partlabel/keysandbackups
+    udisksctl unmount -b /dev/disk/by-label/${encryptedDriveName} 
+    udisksctl lock -b /dev/disk/by-partlabel/${encryptedDriveName}
+    udisksctl power-off -b /dev/disk/by-partlabel/${encryptedDriveName}
     if [ $? -eq 0 ]; then
         echo ""
         echo "Usbkey shutdown"
@@ -47,7 +49,7 @@ function shutdownUSBDrive {
 if [ "$1" = "unlock" ]; then
 	unlockUSBDrive
 elif [ "$1" = "ssh" ]; then
-    ssh-add /media/josh/keysandbackups/id_rsa
+    ssh-add /media/$USER/${encryptedDriveName}/id_rsa
 elif [ "$1" = "go" ]; then
     unlockUSBDrive
     loadSSHKey
