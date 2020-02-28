@@ -11,19 +11,30 @@ fi
 
 
 function unlockUSBDrive {
-    udisksctl unlock -b /dev/disk/by-partlabel/${encryptedDriveName}
-    udisksctl mount -b /dev/disk/by-label/${encryptedDriveName}
-    if [ $? -eq 0 ]; then
-        echo ""
-        echo "Usbkey unlocked"
-    else
-        echo ""
-        echo "Usbkey failed to unlock"
-        echo "Did you use the correct passphrase?"
-        echo ""
-        echo "Check to see if it's plugged in"
-        echo "If it's plugged in, unplug it and plug it in again"
+    unlockOutput=$(udisksctl unlock -b /dev/disk/by-partlabel/${encryptedDriveName} 2>&1 >/dev/null)
+    if  [[ $unlockOutput == *"already unlocked"* ]]; then
+        echo "USBKey already unlocked"
+    elif [[ $unlockOutput == *"not permitted"* ]]; then
+        echo "Passphrase incorrect"
+    elif [[ $unlockOutput == *"Error looking up"* ]]; then
+        echo "USBKey '$encryptedDriveName' not found"
+        echo "Check to see that it's plugged in"
+        echo "If it's plugged in, remove and reinsert it and try again"
+    else 
+        echo "USBKey unlocked"
+        mountOutput=$(udisksctl mount -b /dev/disk/by-label/${encryptedDriveName} 2>&1 >/dev/null)
+        if [ $? -eq 0 ]; then
+            echo "USBKey mounted"
+        else
+            echo ""
+            echo "USBKey failed to mount:"
+            echo $mountOutput
+        fi
     fi
+}
+
+function loadSSHKey {
+    ssh-add /media/$USER/${encryptedDriveName}/id_rsa
 }
 
 function lockUSBDrive {
@@ -67,9 +78,10 @@ function printSetupHelp {
 if [ "$1" = "unlock" ]; then
 	unlockUSBDrive
 elif [ "$1" = "ssh" ]; then
-    ssh-add /media/$USER/${encryptedDriveName}/id_rsa
+    loadSSHKey
 elif [ "$1" = "go" ]; then
     unlockUSBDrive
+    echo ""
     loadSSHKey
 elif [ "$1" = "lock" ]; then
 	lockUSBDrive
