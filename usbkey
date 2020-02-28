@@ -1,11 +1,19 @@
 #!/bin/bash
 
-encryptedDriveName="keysandbackups"
+defaultEncryptedDriveName="keysandbackups"
+if [ -z "$2" ]; then
+    # no second parameter
+    encryptedDriveName=$defaultEncryptedDriveName
+else 
+    # second paramter
+    encryptedDriveName=$2
+fi
+
 
 function unlockUSBDrive {
     udisksctl unlock -b /dev/disk/by-partlabel/${encryptedDriveName}
-	udisksctl mount -b /dev/disk/by-label/${encryptedDriveName}
-	if [ $? -eq 0 ]; then
+    udisksctl mount -b /dev/disk/by-label/${encryptedDriveName}
+    if [ $? -eq 0 ]; then
         echo ""
         echo "Usbkey unlocked"
     else
@@ -20,8 +28,8 @@ function unlockUSBDrive {
 
 function lockUSBDrive {
     udisksctl unmount -b /dev/disk/by-label/${encryptedDriveName} 
-	udisksctl lock -b /dev/disk/by-partlabel/${encryptedDriveName}
-	if [ $? -eq 0 ]; then
+    udisksctl lock -b /dev/disk/by-partlabel/${encryptedDriveName}
+    if [ $? -eq 0 ]; then
         echo ""
         echo "Usbkey locked"
     else
@@ -46,6 +54,16 @@ function shutdownUSBDrive {
     fi
 }
 
+function printSetupHelp {
+    echo "USBKey device setup:"
+    echo ""
+    echo "Any removable storage device may become a USBKey"
+    echo "Please follow the instructions in README.md"
+    echo ""
+    echo "The most up to date README.md can be found on the usbkey-script GitHub at:"
+    echo "  https://github.com/JerichoJyant/usbkey-script"
+}
+
 if [ "$1" = "unlock" ]; then
 	unlockUSBDrive
 elif [ "$1" = "ssh" ]; then
@@ -57,11 +75,19 @@ elif [ "$1" = "lock" ]; then
 	lockUSBDrive
 elif [ "$1" = "shutdown" ]; then
     shutdownUSBDrive
+elif [ "$1" = "setup" ]; then
+    printSetupHelp
 else
-	echo "usage: unlock -- decrypt and mount your USBKey"
-	echo "usage: ssh -- load SSH key from your USBKey"
-	echo "usage: go -- shortcut to run both 'unlock' and 'ssh'"
+    echo "Usage: usbkey command [nameOfDrive]"
+    echo "  [nameOfDrive] defaults to \"$defaultEncryptedDriveName\""
+    echo ""
+    echo "Commands:"
+	echo "  unlock -- Decrypt and mount your USBKey"
+	echo "  ssh -- Load SSH key from your USBKey"
+	echo "  go -- Shortcut to run both 'unlock' and 'ssh'"
 	echo ""
-	echo "usage: lock -- encrypt and unmount your USBKey"
-	echo "usage: shutdown -- encrypt, unmount, and disable your USBKey until removed and replaced"
+	echo "  lock -- Encrypt and unmount your USBKey"
+	echo "  shutdown -- Encrypt, unmount, and disable your USBKey until removed and replaced"
+    echo ""
+    echo "  setup -- Show help for creating a USBKey"
 fi

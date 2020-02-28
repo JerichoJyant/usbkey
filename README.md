@@ -13,17 +13,26 @@ The term "`usbkey`" refers to the bash script in this repository. "USBKey" refer
 
 When you plug in your USBKey, run `usbkey unlock` and enter your drive's password (You will choose it when you set up your drive). If you need to use your ssh key in a terminal session (I use it for git), run `usbkey ssh` and input your SSH key passphrase. Your passphrase will be saved in ssh-agent for the entirety of that terminal session. `usbkey go` runs both `usbkey unlock` and `usbkey ssh`, in that order.
 
-When you are done with your USBKey, run `usbkey lock`. This will lock and unmount your USBKey. You may also run `usbkey shutdown`, which will lock, unmount, and deactivate your USBKey. You wil need to remove it and reinsert it to use it again. **Warning:** Do not remove your USBKey until you have run `usbkey lock` or `usbkey shutdown`. Data loss and unexpected behaviour may occur.
+When you are done with your USBKey, run `usbkey lock`. This will lock and unmount your USBKey. You may also run `usbkey shutdown`, which will lock, unmount, and deactivate your USBKey. You wil need to remove it and reinsert it to use it again. 
 
-From the script's help output:
+**Warning:** Do not remove your USBKey until you have run `usbkey lock` or `usbkey shutdown`. Data loss and unexpected behaviour may occur.
+
+The script's help output:
 
 ```
-usage: unlock -- decrypt and mount your USBKey
-usage: ssh -- load SSH key from your USBKey
-usage: go -- shortcut to run both 'unlock' and 'ssh'
+Usage: usbkey command [nameOfDrive]
+  [nameOfDrive] defaults to "keysandbackups"
 
-usage: lock -- encrypt and unmount your USBKey
-usage: shutdown -- encrypt, unmount, and disable your USBKey until removed and replaced
+Commands:
+  unlock -- Decrypt and mount your USBKey
+  ssh -- Load SSH key from your USBKey
+  go -- Shortcut to run both 'unlock' and 'ssh'
+
+  lock -- Encrypt and unmount your USBKey
+  shutdown -- Encrypt, unmount, and disable your USBKey until removed and replaced
+
+  setup -- Show help for creating a USBKey
+
 ```
 
 ## Setting up your drive:
@@ -31,13 +40,13 @@ usage: shutdown -- encrypt, unmount, and disable your USBKey until removed and r
 
 To erase your USB drive and turn it into an encrypted USBKey, follow these [drive setup instructions](https://unix.stackexchange.com/a/329639/397714) from stackexchange's [asciiphil](https://unix.stackexchange.com/users/39176/asciiphil). 
 
-**CAUTION:** Disk partitioning is dangerous and should only be done by someone experienced with Unix/Linux. You will lose all data on the USB drive. Make backups, and be aware that you may lose other data on other disks, such as mission-critical, business related, and sentimental data if you don't know what you're doing. Don't blame me! 
+Make sure to decide on a name for your USBKey partiton, otherwise it will be called `example` if you simply copy and paste the commands. I chose `keysandbackups`.
 
 Make sure you find the correct name for your device -- when you run `sudo parted /dev/sda` replace `/dev/sda` with the name of your device (if it's not actually `/dev/sda`). I almost nuked my hard drive by not using the correct name.
 
-Make sure to decide on a name for your USBKey partiton, otherwise it will be called `example` if you simply copy and paste the commands. I chose `keysandbackups`.
-
 I had to slightly modify the instructions for Ubuntu 18.04 and use `/dev/disk/` instead of `/dev/disks`.
+
+**CAUTION:** Disk partitioning is dangerous and should only be done by someone experienced with Unix/Linux. You will lose all data on the USB drive. Make backups, and be aware that you may lose other data on other disks, such as mission-critical, business related, and sentimental data if you don't know what you're doing. Don't blame me! 
 
 ## Configuring the script:
 The script was designed and tested on Ubuntu 18.04. You need udisksctl, ssh-add, and ssh-agent installed.
