@@ -58,10 +58,10 @@ elif [ "$1" = "lock" ]; then
 elif [ "$1" = "shutdown" ]; then
     shutdownUSBDrive
 else
-	echo "usage: unlock -- decrypt and mount usbkey"
-	echo "usage: ssh -- load SSH key from usbkey"
+	echo "usage: unlock -- decrypt and mount your usbkey"
+	echo "usage: ssh -- load SSH key from your usbkey"
 	echo "usage: go -- shortcut to run both 'unlock' and 'ssh'"
 	echo ""
-	echo "usage: lock -- encrypt and unmount usbkey"
-	echo "usage: shutdown -- encrypt, unmount, and disable usbkey until removed and replaced"
+	echo "usage: lock -- encrypt and unmount your usbkey"
+	echo "usage: shutdown -- encrypt, unmount, and disable your usbkey until removed and replaced"
 fi
