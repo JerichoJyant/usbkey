@@ -36,6 +36,14 @@ function unlockUSBDrive {
 
 function loadSSHKey {
     ssh-add /media/$USER/${encryptedDriveName}/id_rsa
+    echo ""
+    if [ $? -ne 0 ]; then
+        echo "Error: SSH key not loaded"
+    else
+        echo "SSH key loaded."
+        echo "Note: Locking or shuting down your USBKey will not remove the SSH key."
+        echo "It will persist until you end this terminal session."
+    fi
 }
 
 function lockUSBDrive {
