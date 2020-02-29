@@ -40,9 +40,9 @@ function loadSSHKey {
     if [ $? -ne 0 ]; then
         echo "Error: SSH key not loaded"
     else
-        echo "SSH key loaded."
-        echo "Note: Locking or shuting down your USBKey will not remove the SSH key."
-        echo "It will persist until you end this terminal session."
+        echo "SSH key loaded"
+        echo "Note: Locking or shuting down your USBKey will not remove the SSH key"
+        echo "It will persist until you end this terminal session"
     fi
 }
 
@@ -57,6 +57,7 @@ function lockUSBDrive {
         lockOutput=$(udisksctl lock -b /dev/disk/by-partlabel/${encryptedDriveName} 2>&1 >/dev/null)
         if [ $? -eq 0 ]; then
             echo "USBKey '$encryptedDriveName' unmounted and locked"
+            echo "You may remove it now"
         else
             echo "Error: Count not lock USBKey '$encryptedDriveName'" >/dev/stderr
             echo ""
@@ -67,10 +68,11 @@ function lockUSBDrive {
 
 function shutdownUSBDrive {
     lockOutput=$(lockUSBDrive 2>&1 >/dev/null)
-    # We assume it's either already locked or 
+    # We assume it's either already locked or we need the error message for later
     shutdownOutput=$(udisksctl power-off -b /dev/disk/by-partlabel/${encryptedDriveName} 2>&1 >/dev/null)
     if [ $? -eq 0 ]; then
         echo "'$encryptedDriveName' shutdown"
+        echo "You may remove it now"
     else
         echo $lockOutput >/dev/stderr
         echo ""
