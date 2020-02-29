@@ -38,7 +38,7 @@ Commands:
 ## Setting up your drive:
 **Read this section and the drive setup instructions carefully before taking any action.**
 
-To erase your USB drive and turn it into an encrypted USBKey, follow these [drive setup instructions](https://unix.stackexchange.com/a/329639/397714) from stackexchange's [asciiphil](https://unix.stackexchange.com/users/39176/asciiphil). 
+To erase your USB drive and turn it into an encrypted USBKey, follow these [drive setup instructions](https://unix.stackexchange.com/a/329639/397714) from the StackExchange user [asciiphil](https://unix.stackexchange.com/users/39176/asciiphil). 
 
 Make sure to decide on a name for your USBKey partiton, otherwise it will be called `example` if you simply copy and paste the commands. I chose `keysandbackups`.
 
@@ -80,3 +80,9 @@ I recommend reading the script before you use it so you have an idea of what the
 
 ## Contributing
 I welcome contributions to this project. Please use GitHub's tools to report bugs, request features, and submit pull requests. Please let me know if you find this project useful! I'm new to open source contributing and welcome all constructive and critical feedback.
+
+## Credits
+I read a lot of material in order to figure out how to make this project. Most of the script is adapted from [these instructions for creating and using a LUKS encrypted drive in linux](https://unix.stackexchange.com/a/329639/397714) from the StackExchange user [asciiphil](https://unix.stackexchange.com/users/39176/asciiphil). Many of the commands inside the script are from their answer.
+
+## Roadmap
+I plan on making the script capable of making a USBKey (paritioning and encryption setup) and configuring your system to use it. The ultimate goal is to make the project installable through apt and other package managers.
