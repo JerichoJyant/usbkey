@@ -87,7 +87,7 @@ function printSetupHelp {
     echo "Please follow the instructions in README.md"
     echo ""
     echo "The most up to date README.md can be found on the usbkey GitHub at:"
-    echo "  https://github.com/JerichoJyant/usbkey-script"
+    echo "  https://github.com/JerichoJyant/usbkey"
 }
 
 if [ "$1" = "unlock" ]; then
