@@ -11,6 +11,7 @@ fi
 
 
 function unlockUSBDrive {
+    echo "Unlock your USBKey:"
     unlockOutput=$(udisksctl unlock -b /dev/disk/by-partlabel/${encryptedDriveName} 2>&1 >/dev/null)
     if  [[ $unlockOutput == *"already unlocked"* ]]; then
         echo ""
