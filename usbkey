@@ -14,10 +14,8 @@ function unlockUSBDrive {
     echo "Unlock your USBKey:"
     unlockOutput=$(udisksctl unlock -b /dev/disk/by-partlabel/${encryptedDriveName} 2>&1 >/dev/null)
     if  [[ $unlockOutput == *"already unlocked"* ]]; then
-        echo ""
         echo "USBKey '$encryptedDriveName' already unlocked"
     elif [[ $unlockOutput == *"not permitted"* ]]; then
-        echo ""
         echo "Passphrase for USBKey '$encryptedDriveName' incorrect" >/dev/stderr
     elif [[ $unlockOutput == *"Error looking up"* ]]; then
         echo "USBKey '$encryptedDriveName' not found" >/dev/stderr
@@ -36,12 +34,13 @@ function unlockUSBDrive {
 }
 
 function loadSSHKey {
-    ssh-add /media/$USER/${encryptedDriveName}/id_rsa
-    echo ""
-    if [ $? -ne 0 ]; then
-        echo "Error: SSH key not loaded"
+    unlockOutput=$(ssh-add /media/$USER/${encryptedDriveName}/id_rsa 2>&1 >/dev/null)
+    if  [[ $unlockOutput == *"No such file or directory"* ]]; then
+        echo "SSH Key not found"
+        echo "Is your USBKey plugged in and unlocked?"
     else
         echo "SSH key loaded"
+        echo ""
         echo "Note: Locking or shuting down your USBKey will not remove the SSH key"
         echo "It will persist until you end this terminal session"
     fi
@@ -50,10 +49,8 @@ function loadSSHKey {
 function lockUSBDrive {
     unmountOutput=$(udisksctl unmount -b /dev/disk/by-label/${encryptedDriveName} 2>&1 >/dev/null)
     if  [[ $unmountOutput == *"Error looking up object"* ]]; then
-        echo "Error: Count not unmount USBKey '$encryptedDriveName'" >/dev/stderr
-        echo ""
+        echo "Could not unmount USBKey '$encryptedDriveName'" >/dev/stderr
         echo "It may be already locked, not plugged in, or shutdown"
-        echo "If it's plugged in, remove and reinsert it then try again"
     else
         lockOutput=$(udisksctl lock -b /dev/disk/by-partlabel/${encryptedDriveName} 2>&1 >/dev/null)
         if [ $? -eq 0 ]; then
