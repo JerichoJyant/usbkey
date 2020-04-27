@@ -43,7 +43,7 @@ function loadSSHKey {
     else
         echo "SSH key loaded"
         echo "Note: Locking or shuting down your USBKey will not remove the SSH key"
-        echo "It will persist until you end this terminal session"
+        echo "It will persist until you end all terminal sessions you've loaded the SSH key into"
     fi
 }
 
